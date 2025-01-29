@@ -1,0 +1,49 @@
+import requests
+
+# Funcție pentru a obține cursurile de schimb de la API
+def get_exchange_rate(base_currency, target_currency):
+    url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+    
+    try:
+        # Cerere GET pentru a obține datele
+        response = requests.get(url)
+        response.raise_for_status()  # Verifică dacă cererea a avut succes
+        
+        data = response.json()
+        
+        # Dacă moneda țintă există în răspunsul API-ului, returnăm cursul de schimb
+        if target_currency in data['rates']:
+            return data['rates'][target_currency]
+        else:
+            print(f"Moneda {target_currency} nu este disponibilă.")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"A apărut o eroare la conectarea la API: {e}")
+        return None
+
+# Funcție pentru a efectua conversia
+def convert_currency(base_currency, target_currency, amount):
+    exchange_rate = get_exchange_rate(base_currency, target_currency)
+    
+    if exchange_rate is not None:
+        # Calculăm suma convertită
+        converted_amount = amount * exchange_rate
+        return converted_amount, exchange_rate
+    return None, None
+
+# Program principal
+if __name__ == "__main__":
+    # Solicităm utilizatorului să introducă monedele și suma
+    base_currency = input("Introduceți moneda de proveniență (de exemplu, RON, USD, EUR): ").upper()
+    target_currency = input("Introduceți moneda de destinație (de exemplu, RON, USD, EUR): ").upper()
+    amount = float(input("Introduceți suma pe care doriți să o convertești: "))
+    
+    # Efectuăm conversia
+    converted_amount, exchange_rate = convert_currency(base_currency, target_currency, amount)
+    
+    # Afișăm rezultatul
+    if converted_amount is not None:
+        print(f"\nConversia de {amount} {base_currency} în {target_currency} este:")
+        print(f"Suma inițială: {amount} {base_currency}")
+        print(f"Cursul de schimb: 1 {base_currency} = {exchange_rate} {target_currency}")
+        print(f"Suma finală: {converted_amount:.2f} {target_currency}")
