@@ -1,0 +1,42 @@
+import os
+
+
+# Funcție pentru a redenumi fișierele dintr-un folder
+def rename_files_in_directory(directory):
+    try:
+        # Verificăm dacă directorul există
+        if not os.path.exists(directory):
+            print(f"Directorul {directory} nu există.")
+            return
+
+        # Obținem lista fișierelor din director
+        files = os.listdir(directory)
+
+        # Iterăm prin fiecare fișier din director
+        for filename in files:
+            # Creăm calea completă a fișierului
+            file_path = os.path.join(directory, filename)
+
+            # Verificăm dacă este un fișier (nu un folder)
+            if os.path.isfile(file_path):
+                # Creăm noul nume pentru fișier
+                new_filename = f"renamed_{filename}"
+                new_file_path = os.path.join(directory, new_filename)
+
+                # Redenumim fișierul
+                os.rename(file_path, new_file_path)
+                print(f"Fișierul '{filename}' a fost redenumit în '{new_filename}'.")
+            else:
+                print(f"'{filename}' nu este un fișier, se sare peste acesta.")
+
+    except Exception as e:
+        print(f"A apărut o eroare: {e}")
+
+
+# Program principal
+if __name__ == "__main__":
+    # Cerem utilizatorului să introducă calea către director
+    directory = input("Introduceti calea către directorul care conține fișierele: ")
+
+    # Apelăm funcția pentru a redenumi fișierele
+    rename_files_in_directory(directory)
